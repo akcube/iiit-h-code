@@ -1,0 +1,4 @@
+bash q6.sh -C insert -f Bruce -l Wayne -n 12345678 -o "Wayne Enterprises"
+bash q6.sh -C insert -f Tony -l Stark -n 9988776655 -o "Stark Industries"
+bash q6.sh -C edit -k Bruce -f Bruce -l Wayne -n 87654321 -o "Wayne Enterprises" 
+bash q6.sh -C search -c  fname -v Bruce 
