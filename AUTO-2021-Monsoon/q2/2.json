@@ -1,0 +1,10 @@
+{
+    "axiom": "F",
+    "productions": [{"F": "F-F++F-F"}],
+    "finals": [
+        {"+": "() => { ctx.rotate((Math.PI / 180) * -72) }"},
+        {"-": "() => { ctx.rotate((Math.PI / 180) * 72) }"},
+        {"[": "() => { ctx.save() }"},
+        {"]": "() => { ctx.restore() }"},
+    ],
+}

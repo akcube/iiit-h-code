@@ -1,0 +1,144 @@
+// Player
+
+CREATE TABLE player (
+	name VARCHAR(64) NOT NULL,
+	tag VARCHAR(10) NOT NULL, 
+	date_of_birth DATE NOT NULL,
+	time_played TIME NOT NULL DEFAULT '00:00:00',
+	rank_rating INT NOT NULL DEFAULT 0,
+	region VARCHAR(32) NOT NULL CHECK (region IN ("NA", "LATAM", "BR", "EU", "KR", "AP")),
+	coached_by_name VARCHAR(64),
+	coached_by_tag VARCHAR(10),
+	PRIMARY KEY(name, tag)
+);
+
+// Team
+CREATE TABLE team (
+	team_id INT NOT NULL AUTO_INCREMENT,
+	matches_played INT NOT NULL DEFAULT 0 CHECK (matches_played >= 0),
+	wins INT NOT NULL DEFAULT 0 CHECK (wins >= 0),
+	PRIMARY KEY(team_id)
+);
+
+// Matches
+CREATE TABLE matches (
+	match_id INT NOT NULL AUTO_INCREMENT,
+	start_time DATETIME NOT NULL,
+	duration TIME NOT NULL,
+	type VARCHAR(32) NOT NULL CHECK (type IN ("ranked", "unrated", "spikerush")), 
+	score_1 INT NOT NULL CHECK (score_1 >=0 AND score_1 <= 13),
+	score_2 INT NOT NULL CHECK (score_2 >=0 AND score_2 <= 13),
+	map VARCHAR(32) NOT NULL CHECK (map IN ("bind", "haven", "split", "ascent", "icebox", "breeze")),
+	rr_delta INT DEFAULT NULL,
+	PRIMARY KEY(match_id)
+);
+
+// Agent
+CREATE TABLE agent (
+	agent_id INT NOT NULL AUTO_INCREMENT,
+	name VARCHAR(32) NOT NULL,
+	class VARCHAR(32) NOT NULL CHECK (class IN ("duelists", "controllers", "initiators", "sentinels")),
+	lore TEXT NOT NULL,
+	PRIMARY KEY(agent_id)
+);
+
+// 5 stack stats
+CREATE TABLE 5_stack_stats (
+	team_id INT NOT NULL,
+	player_name VARCHAR(64) NOT NULL,
+	player_tag VARCHAR(10) NOT NULL,
+	kills INT NOT NULL CHECK (kills >= 0),
+	assists INT NOT NULL CHECK (assists >= 0),
+	deaths INT NOT NULL CHECK (deaths >= 0),
+	credits_spent INT NOT NULL CHECK (credits_spent >= 0),
+	total_damage INT NOT NULL CHECK (total_damage >= 0),
+	PRIMARY KEY (team_id, player_name, player_tag),
+	FOREIGN KEY (team_id) REFERENCES team(team_id) ON UPDATE CASCADE ON DELETE CASCADE, 
+	FOREIGN KEY (player_name, player_tag) REFERENCES player(name, tag) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+// Round 
+CREATE TABLE round (
+	match_id INT NOT NULL, 
+	round_no INT NOT NULL,
+	player_name VARCHAR(64) NOT NULL,
+	player_tag VARCHAR(10) NOT NULL,
+	kills INT NOT NULL CHECK (kills >= 0),
+	assists INT NOT NULL CHECK (assists >= 0),
+	deaths INT NOT NULL CHECK (deaths >= 0),
+	damage_dealt INT NOT NULL CHECK (damage_dealt >= 0),
+	first_blood BOOL NOT NULL,
+	planter BOOL NOT NULL,
+	defuser BOOL NOT NULL,
+	PRIMARY KEY(match_id, round_no, player_name, player_tag),
+	FOREIGN KEY(player_name, player_tag) REFERENCES player(name, tag) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY(match_id) REFERENCES matches(match_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+// Match description
+CREATE TABLE match_description(
+	player_name VARCHAR(64) NOT NULL,
+	player_tag VARCHAR(10) NOT NULL,
+	match_id INT NOT NULL,
+	agent_id INT NOT NULL,
+	team_id INT NOT NULL,
+	PRIMARY KEY (player_name, player_tag, match_id),
+	FOREIGN KEY (match_id) REFERENCES matches(match_id) ON UPDATE CASCADE ON DELETE CASCADE, 
+	FOREIGN KEY (team_id) REFERENCES team(team_id) ON UPDATE CASCADE ON DELETE CASCADE, 
+	FOREIGN KEY (agent_id) REFERENCES agent(agent_id) ON UPDATE CASCADE ON DELETE CASCADE, 
+	FOREIGN KEY (player_name, player_tag) REFERENCES player(name, tag) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+// Plays
+CREATE TABLE plays(
+	player_name VARCHAR(64) NOT NULL,
+	player_tag VARCHAR(10) NOT NULL,
+	agent_id INT NOT NULL,
+	matches_played INT NOT NULL CHECK (matches_played >= 0),
+	wins INT NOT NULL CHECK (wins >= 0),
+	credits_spent INT NOT NULL CHECK (credits_spent >= 0),
+	total_damage INT NOT NULL CHECK (total_damage >= 0),
+	kills INT NOT NULL CHECK (kills >= 0),
+	assists INT NOT NULL CHECK (assists >= 0),
+	deaths INT NOT NULL CHECK (deaths >= 0),
+	PRIMARY KEY (player_name, player_tag, agent_id),
+	FOREIGN KEY (player_name, player_tag) REFERENCES player(name, tag) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (agent_id) REFERENCES agent(agent_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+// Signature ability
+CREATE TABLE signature_ability(
+	agent_id INT NOT NULL,
+	name VARCHAR(32) NOT NULL,
+	description TEXT NOT NULL,
+	ability_duration INT,
+	base_damage INT NOT NULL DEFAULT 0 CHECK (base_damage >= 0),
+	cost INT NOT NULL DEFAULT 0 CHECK (cost >= 0),
+	max_buy INT NOT NULL CHECK (max_buy >= 1),
+	cooldown INT,
+	PRIMARY KEY (agent_id, name),
+	FOREIGN KEY (agent_id) REFERENCES agent(agent_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+// Ult
+CREATE TABLE ultimate_ability(
+	agent_id INT NOT NULL,
+	name VARCHAR(32) NOT NULL,
+	description TEXT NOT NULL,
+	ability_duration INT,
+	base_damage INT NOT NULL DEFAULT 0 CHECK (base_damage >= 0),
+	points_cost INT NOT NULL CHECK (points_cost >= 0),
+	PRIMARY KEY (agent_id, name),
+	KEY name (name),
+	FOREIGN KEY (agent_id) REFERENCES agent(agent_id) ON UPDATE CASCADE ON DELETE CASCADE	
+);
+
+// Voice lines
+CREATE TABLE voice_lines(
+	agent_id INT NOT NULL,
+	ability_name VARCHAR(32) NOT NULL,
+	voiceline VARCHAR(255) NOT NULL,
+	PRIMARY KEY(agent_id, ability_name, voiceline),
+	FOREIGN KEY (agent_id) REFERENCES agent(agent_id) ON UPDATE CASCADE ON DELETE CASCADE, 
+	FOREIGN KEY (ability_name) REFERENCES ultimate_ability(name) ON UPDATE CASCADE ON DELETE CASCADE
+);
