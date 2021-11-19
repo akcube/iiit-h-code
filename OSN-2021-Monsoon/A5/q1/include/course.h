@@ -9,10 +9,13 @@ typedef struct Course{
 	int taship_left;
 	int labs_size;
 	int *labs;
+
+	pthread_mutex_t lock;
 } Course;
 
 void create_course(Course *c);
 void delete_course(Course *c);
-void read_courses(Course *C, int num_courses);
+void read_courses(Course **C, int num_courses);
+Course *getCourseByID(int id, Course *C);
 
 #endif

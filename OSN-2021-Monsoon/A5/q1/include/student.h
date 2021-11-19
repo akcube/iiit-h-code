@@ -7,10 +7,18 @@ typedef struct Student{
 	int allotted;
 	int time_filled;
 	int final_choice;
+	int id;
+
+	pthread_mutex_t lock;
 } Student;
 
-void create_student(Student *s);
+// Util
+int student_time_cmp(const void *, const void *);
+
+void create_student(Student *s, int id);
 void destroy_student(Student *s);
-void read_students(Student *S, int num_students);
+void read_students(Student **S, int num_students);
+
+void *spawn_students(void *arg);
 
 #endif

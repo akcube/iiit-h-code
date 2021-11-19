@@ -7,7 +7,7 @@ void create_lab(Lab *l){
 	l->name = NULL;
 	l->num_students = 0;
 	l->limit = 0;
-	l->available = NULL;
+	l->tas = NULL;
 }
 
 void destroy_lab(Lab *l){
@@ -15,18 +15,20 @@ void destroy_lab(Lab *l){
 	free(l);
 }
 
-void read_labs(Lab *L, int num_labs){
-	L = calloc(num_labs, sizeof(Lab));
+void read_labs(Lab **L, int num_labs){
+	
+	Lab *T = *L = calloc(num_labs, sizeof(Lab));
 	char buf[1024];
 
 	for(int i=0; i < num_labs; i++){
-		Lab *l = &L[i];
+		Lab *l = &T[i];
 		create_lab(l);
 		scanf("%s %d %d", buf, &(l->num_students), &(l->limit));
 
 		l->name = strdup(buf);
-		l->available = calloc(l->limit, sizeof(int));
+		l->tas = calloc(l->num_students, sizeof(int));
 
-		l->available[0] = l->num_students;
+		for(int j=0; j < l->num_students; j++) 
+			l->tas[j] = l->limit;
 	}
 }
