@@ -1,6 +1,8 @@
 #ifndef __COURSESIM_LAB
 #define __COURSESIM_LAB
 
+#include <semaphore.h>
+
 typedef struct Lab{
 	char *name;
 	int num_students;
@@ -14,5 +16,6 @@ typedef struct Lab{
 void create_lab(Lab *l);
 void destroy_lab(Lab *l);
 void read_labs(Lab **L, int num_labs);
+void *sim_lab(void *arg);
 
 #endif

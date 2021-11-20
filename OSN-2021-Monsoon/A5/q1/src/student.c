@@ -126,7 +126,7 @@ void *spawn_students(void *arg){
 
 		if(cur == num_students) pthread_exit(NULL);
 
-		while(Students[cur].time_filled == time){
+		while(cur < num_students && Students[cur].time_filled == time){
 			printf("Student %d has filled in preferences for course registration\n", Students[cur].id);
 			
 			// Spawn thread here

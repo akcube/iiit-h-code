@@ -13,6 +13,7 @@ typedef struct Course{
 	int labs_size;
 	int *labs;
 
+	pthread_mutex_t lock;
 	pthread_cond_t finished;
 } Course;
 
@@ -20,5 +21,6 @@ void create_course(Course *c);
 void delete_course(Course *c);
 void read_courses(Course **C);
 Course *getCourseByID(int id, Course *C);
+void *sim_course(void *arg);
 
 #endif

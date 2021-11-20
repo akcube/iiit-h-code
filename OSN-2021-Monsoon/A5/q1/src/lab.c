@@ -31,6 +31,7 @@ void *sim_lab(void *arg){
 			pthread_exit(NULL);
 		}
 	}
+	pthread_exit(NULL);
 }
 
 void read_labs(Lab **L, int num_labs){
@@ -44,8 +45,8 @@ void read_labs(Lab **L, int num_labs){
 		scanf("%s %d %d", buf, &(l->num_students), &(l->limit));
 
 		l->name = strdup(buf);
-		l->ta = malloc(l->num_students, sizeof(int));
-		l->ta_lock = malloc(l->num_students, sizeof(pthread_mutex_t));
+		l->ta = malloc(l->num_students * sizeof(int));
+		l->ta_lock = malloc(l->num_students * sizeof(pthread_mutex_t));
 
 		for(int j=0; j < l->num_students; j++){
 			l->ta[j] = l->limit;
