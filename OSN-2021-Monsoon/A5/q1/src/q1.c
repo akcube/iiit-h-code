@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
+
 #include "../include/lab.h"
 #include "../include/course.h"
 #include "../include/student.h"
+#include "../include/utils.h"
 
-int num_students, num_labs, num_courses;
+int num_students = 0; 
+int num_labs = 0;
+int num_courses = 0;
 Course *Courses;
 Student *Students;
 Lab *Labs;
@@ -16,13 +20,17 @@ int main(void){
 	
 	scanf("%d %d %d", &num_students, &num_labs, &num_courses);
 
-	read_courses(&Courses, num_courses);
+	read_courses(&Courses);
 	read_students(&Students, num_students);
 	read_labs(&Labs, num_labs);
 
 	qsort(Students, num_students, sizeof(Student), student_time_cmp);
 
-	pthread_create(&spawn_students_t, NULL, spawn_students, Students);
+	pair *spawn_students_arg = malloc(sizeof(pair));
+	spawn_students_arg->first = (void*) Students;
+	spawn_students_arg->second = (void*) Courses;
+	pthread_create(&spawn_students_t, NULL, spawn_students, spawn_students_arg);
 
 	pthread_join(spawn_students_t, NULL);
+	while(true);
 }
