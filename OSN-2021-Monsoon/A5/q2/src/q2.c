@@ -44,4 +44,7 @@ int main(void){
 	}
 	pthread_create(&run_game, NULL, sim_match, Chances);
 	pthread_join(run_game, NULL);
+	for(int i=0; i<num_groups; i++){
+		pthread_join(spawn_spec_t[i], NULL);
+	}
 }

@@ -14,6 +14,7 @@ typedef struct Course{
 	int *labs;
 
 	pthread_mutex_t lock;
+	pthread_mutex_t cond_lock;
 	pthread_cond_t finished;
 } Course;
 

@@ -9,12 +9,12 @@ LDIR =lib
 LIBS= -pthread
 
 # Add .h include files here
-_DEPS = course.h lab.h student.h
+_DEPS = course.h lab.h student.h utils.h
 
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # Add .o include file deps here
-_OBJ = q1.o course.o lab.o student.o
+_OBJ = q1.o course.o lab.o student.o utils.o
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 

@@ -4,6 +4,7 @@
 enum { ZONE_H, ZONE_A, ZONE_N };
 
 typedef struct Zone{
+	char name;
 	int capacity;
 	sem_t free;
 } Zone;

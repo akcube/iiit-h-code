@@ -1,4 +1,6 @@
 #include <time.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 #include "../include/utils.h"
 #include "../include/global.h"
@@ -18,4 +20,15 @@ struct timespec getTimespec(int t){
 	retval.tv_sec = start.tv_sec + t;
 	retval.tv_nsec = start.tv_nsec;
 	return retval;
+}
+
+void cprintf(const char *color, const char *format, ...) {
+    printf("%s", color);
+
+    va_list argptr;
+    va_start(argptr, format);
+    vprintf(format, argptr);
+    va_end(argptr);
+
+    printf("%s", RESET);
 }

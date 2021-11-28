@@ -8,9 +8,12 @@ typedef struct Match{
 	int home_score;
 	int away_score;
 
-	sem_t home;
-	sem_t away;
+	pthread_cond_t home_c;
+	pthread_cond_t away_c;
 	pthread_mutex_t lock;
+	pthread_cond_t HN_free;
+	pthread_cond_t A_free;
+	pthread_cond_t HAN_free;
 
 	pthread_mutex_t redundant_lock;
 	pthread_cond_t redundant_cond;

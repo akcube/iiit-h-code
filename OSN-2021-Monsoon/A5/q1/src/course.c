@@ -21,6 +21,7 @@ void create_course(Course *c){
 	c->labs_size = 0;
 	c->labs = NULL;
 	pthread_mutex_init(&(c->lock), NULL);
+	pthread_mutex_init(&(c->cond_lock), NULL);
 	pthread_cond_init(&(c->finished), NULL);
 
 	pthread_mutex_lock(&(c->lock));
@@ -29,12 +30,12 @@ void create_course(Course *c){
 void delete_course(Course *c){
 	pthread_mutex_destroy(&(c->lock));
 	pthread_cond_destroy(&(c->finished));
+	pthread_mutex_destroy(&(c->cond_lock));
 	memset(c, 0, sizeof(Course));
 	free(c);
 }
 
 Course *getCourseByID(int id, Course *C){
-	
 	if(id >= 0 && id < num_courses)
 		return &C[id];
 	return NULL;
@@ -61,7 +62,7 @@ void *sim_course(void *arg){
 
 				for(int j=0; j < lab->num_students; j++){
 					// TA in use by some other course, come back later
-					if(pthread_mutex_trylock(&(lab->ta_lock[j])) == 0){
+					if(pthread_mutex_trylock(&(lab->ta_lock[j])) != 0){
 						NO_FREE_TA = false;
 					}
 					else{
@@ -75,7 +76,7 @@ void *sim_course(void *arg){
 							current_ta_lock = &(lab->ta_lock[j]);
 							holding_ta = j;
 							holding_lab = lab->name;
-							printf("TA %d from lab %s has been allocated to course %s for their %d(nt/rd/st) TA ship\n", \
+							cprintf(RED, "TA %d from lab %s has been allocated to course %s for their %d(nt/rd/st) TA ship\n", \
 									j, lab->name, c->name, lab->limit - lab->ta[j]);
 
 							if(lab->ta[j] == 0){
@@ -85,7 +86,7 @@ void *sim_course(void *arg){
 							c->occupied_slots = 0;
 							c->allotted_slots = rand()%(c->max_slots) + 1;
 
-							printf("Course %s has been allocated %d seats\n", c->name, c->allotted_slots);
+							cprintf(GREEN, "Course %s has been allocated %d seats\n", c->name, c->allotted_slots);
 							goto ta_found;
 						}
 					}
@@ -107,20 +108,23 @@ void *sim_course(void *arg){
 
 			// Conduct tutorial
 			pthread_mutex_lock(&(c->lock));
-			printf("Tutorial has started for Course %s with %d seats filled out of %d\n", \
+			cprintf(YELLOW, "Tutorial has started for Course %s with %d seats filled out of %d\n", \
 					c->name, c->occupied_slots, c->allotted_slots);
 			c->state = TUT_IN_PROGRESS;
 			sleep(2);
 			pthread_mutex_unlock(current_ta_lock);
 			current_ta_lock = NULL;
-			printf("TA %d from lab %s has completed the tutorial and left the course %s\n", \
+			cprintf(BLUE, "TA %d from lab %s has completed the tutorial and left the course %s\n", \
 					holding_ta, holding_lab, c->name);
 			holding_ta = -1;
 			holding_lab = NULL;
 			c->state = LOOKING_FOR_TA;
+			pthread_mutex_lock(&(c->cond_lock));
 			pthread_cond_broadcast(&(c->finished));
+			pthread_mutex_unlock(&(c->cond_lock));
 		}
 	}
+	pthread_mutex_unlock(&(c->lock));
 	pthread_exit(NULL);
 }
 

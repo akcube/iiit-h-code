@@ -28,37 +28,41 @@ void init_match(){
 	MatchInfo.away_score = 0;
 
 	pthread_mutex_init(&MatchInfo.lock, NULL);
-	sem_init(&MatchInfo.home, 0, 0);
-	sem_init(&MatchInfo.away, 0, 0);
-
+	pthread_cond_init(&MatchInfo.home_c, NULL);
+	pthread_cond_init(&MatchInfo.away_c, NULL);
+	
 	pthread_mutex_init(&MatchInfo.redundant_lock, NULL);
 	pthread_cond_init(&MatchInfo.redundant_cond, NULL);
 }
 
 void *sim_match(void *arg){
-	pthread_mutex_lock(&MatchInfo.redundant_lock);
 	GoalInfo *Chances = (GoalInfo*) arg;
 
 	for(int i=0; i<num_chances; i++){
 		struct timespec t = getTimespec(Chances[i].time);
+		pthread_mutex_lock(&MatchInfo.redundant_lock);
 		pthread_cond_timedwait(&MatchInfo.redundant_cond, &MatchInfo.redundant_lock, &t);
+		pthread_mutex_unlock(&MatchInfo.redundant_lock);
 		if(Chances[i].prob >= 0.5){
-			
 			pthread_mutex_lock(&MatchInfo.lock);
-
 			switch(Chances[i].team_id){
 				case ZONE_H:
-					sem_post(&MatchInfo.home);
 					MatchInfo.home_score++;
+					cprintf(WHITE, "t=%d: Team H have scored their %d(th/st/nd) goal\n", Chances[i].time, MatchInfo.home_score);
+					pthread_cond_broadcast(&MatchInfo.home_c);
 				break;
 				case ZONE_A:
-					sem_post(&MatchInfo.away);
 					MatchInfo.away_score++;
+					cprintf(WHITE, "t=%d: Team A have scored their %d(th/st/nd) goal\n", Chances[i].time, MatchInfo.away_score);
+					pthread_cond_broadcast(&MatchInfo.away_c);
 				break;
 			}
-
 			pthread_mutex_unlock(&MatchInfo.lock);
 		}
+		else{
+			cprintf(WHITE, "t=%d: Team %c missed the chance to score their %d(th/st/nd) goal\n", Chances[i].time, ((Chances[i].team_id == ZONE_A) ? 'A' : 'H'), MatchInfo.home_score);
+		}
+		
 	}
 	return NULL;
 }

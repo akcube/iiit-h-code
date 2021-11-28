@@ -5,6 +5,7 @@
 #include <semaphore.h>
 
 #include "../include/lab.h"
+#include "../include/utils.h"
 
 void create_lab(Lab *l){
 	l->name = NULL;
@@ -27,7 +28,7 @@ void *sim_lab(void *arg){
 	while(sem_wait(&(lab->ta_free))){
 		ct++;
 		if(ct == lab->num_students){
-			printf("Lab %s no longer has students available for TA ship\n", lab->name);
+			cprintf(PINK, "Lab %s no longer has students available for TA ship\n", lab->name);
 			pthread_exit(NULL);
 		}
 	}
