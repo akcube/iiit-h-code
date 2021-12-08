@@ -1,22 +1,7 @@
 #include<iostream>
 #include<bits/stdc++.h>
-using namespace std;
-bool stateinvector(vector<int> states,int state_c);
-bool alphainvector(vector<char> alpha,int alphabet_c);
 
-int precedence(char c)
-{
-    if(c=='*')
-        return 3;
-    else if(c=='.')
-        return 2;
-    else if(c=='+')
-        return 1;
-    else if(c=='(')
-        return 0;
-    else
-        return -1;
-}
+using namespace std;
 
 typedef struct transition
 {
@@ -26,337 +11,210 @@ typedef struct transition
 }transition;
 
 
+void findreachable(int a, int* rechable, int* visited, int ** &transition){
+    visited[a] = 1;
+    for(int i = 0; i < 26; i++){
+        if(transition[a][i] != -1 && visited[transition[a][i]] == 0){
+            findreachable(transition[a][i], rechable, visited, transition);
+        }
+    }
+    rechable[a] = 1;
 
-string Topostfix(string regex)
-{
-    stack<char> op_stack;
-    string postfix;
-    for(int i=0;i<regex.length();i++)
-    {
-        if(regex[i] == '*' || regex[i] == '.' || regex[i] == '+' || regex[i] == '(' || regex[i] == ')')
-        {
-            if(regex[i] == '(')
-            {
-                op_stack.push(regex[i]);
+}
+
+bool check(int state, int reference, vector<set<int>> equivalence,int ** &transition){
+
+    int findset;
+    int findreference;
+    for(int i = 0; i < 26; i++){
+        for (int j= 0; j<equivalence.size(); j++){
+            if(equivalence[j].find(transition[state][i]) != equivalence[j].end()){
+                findset = j;
             }
-            else if(regex[i] == ')')
-            {
-                while(op_stack.top() != '(')
-                {
-                    postfix.push_back(op_stack.top());
-                    op_stack.pop();
+            if(equivalence[j].find(transition[reference][i]) != equivalence[j].end()){
+                findreference = j;
+            }
+        }
+        if(findset != findreference){
+            return false;
+        }
+
+    }
+    return true;
+}
+
+vector<set<int>> equivalencetheorem (vector<set<int>> equivalence,  int ** &transition){
+    vector<set<int>> newequivalence;
+
+    for (auto it = equivalence.begin(); it != equivalence.end(); it++){
+
+        for (auto it2 = it->begin(); it2 != it->end(); it2++){
+            bool flag = true;
+            for(int i=0; i<newequivalence.size();i++){
+                if(newequivalence[i].find(*it2) != newequivalence[i].end()){
+                    flag = false;
+                    break;
                 }
-                op_stack.pop();
             }
-            else
-            {
-                while(!op_stack.empty() && precedence(op_stack.top()) >= precedence(regex[i]))
-                {
-                    postfix.push_back(op_stack.top());
-                    op_stack.pop();
+            if(flag){
+                set<int> newset;
+                newset.insert(*it2);
+
+                for(auto it3 = it->begin(); it3 != it->end(); it3++){
+                    bool flag2 = true;
+                    for(int j=0; j<newequivalence.size();j++){
+                        if(newequivalence[j].find(*it3) != newequivalence[j].end()){
+                            flag2 = false;
+                            break;
+                        }
+                    }
+                    if(flag2){
+
+                        if(check(*it3, *it2, equivalence, transition)){
+                            newset.insert(*it3);
+                        }
+                    }
                 }
-                op_stack.push(regex[i]);
+                newequivalence.push_back(newset);
             }
         }
-        else
-        {
-            postfix.push_back(regex[i]);
-        }
     }
-    while(!op_stack.empty())
-    {
-        postfix.push_back(op_stack.top());
-        op_stack.pop();
+    if (newequivalence.size() == equivalence.size()){
+        return newequivalence;
     }
-
-    return postfix;
-
-}
-typedef struct NFA
-{
-    vector<int> states;
-    vector<char> alphabet;
-    vector<transition> trans;
-    vector<int> start_state,final_state;
-
-
-} NFA;
-
-void addstate(vector<int> &states, int state_c)
-{
-    if (!stateinvector(states,state_c))
-    {
-        states.push_back(state_c);
+    else{
+        return equivalencetheorem(newequivalence, transition);
     }
 
 
 }
 
-void addalphabet(vector<char> &alphabet, char c)
-{
-    if(!alphainvector(alphabet,c))
+
+
+int main(){
+
+
+    int startstate = 0;
+    int n,k,a;
+    cin>>n>>k>>a;
+    set<int> final_states;
+    set<int> non_final_states;
+    int state;
+    for (int i = 0; i < a; i++)
     {
-        alphabet.push_back(c);
+        cin>>state;
+        final_states.insert(state);
     }
-}
-bool stateinvector(vector<int> states,int state_c)
-{
-    for(int i = 0;i<states.size();i++)
-    {
-        if (states[i] == state_c){
-            return 1;
+    for(int i = 0; i < n; i++){
+        if(final_states.find(i) == final_states.end()){
+            non_final_states.insert(i);
         }
     }
-    return 0;
-}
-bool alphainvector(vector<char> alpha,int alphabet_c)
-{
-    for(int i = 0;i<alpha.size();i++)
+
+
+    int **transitionMap = (int**)malloc(n*sizeof(int*));
+	for (int i = 0; i < n; i++){
+		transitionMap[i] = (int*) malloc(26*sizeof(int));
+		for (int j = 0; j < 26; j++){
+			transitionMap[i][j] = -1;
+		}
+	}
+
+
+
+    for (int i = 0; i < k; i++)
     {
-        if (alpha[i] == alphabet_c){
-            return 1;
-        }
+        int x,z;
+        char y;
+        cin>>x>>y>>z;
+        transitionMap[x][y-'a'] = z;
     }
-    return 0;
-}
 
+    int *visited = (int*)malloc(n*sizeof(int));
+    for(int i = 0; i < n; i++){
+        visited[i] = 0;
+    }
 
-NFA regextoNFA(string regex)
-{
-    stack<NFA> nfa;
-    int state_count = 0;
+    int *rechable = (int*)malloc(n*sizeof(int));
+    for(int i = 0; i < n; i++){
+        rechable[i] = 0;
+    }
 
-    for (int i = 0; i < regex.length() ; i++)
-    {
-        if(regex[i] <= 'z' && regex[i] >= 'a')
+    findreachable(startstate, rechable, visited, transitionMap);
+
+    for(int i = 0; i<n; i++){
+        if(rechable[i]==0)
         {
-            NFA n;
-            int from = state_count;
-            int to = state_count+1;
-            if (stateinvector(n.states,from) == 0)
-            {
-                n.states.push_back(from);
+            if(non_final_states.find(i) != non_final_states.end()){
+                non_final_states.erase(i);
             }
-            if (stateinvector(n.states,to) == 0)
-            {
-                n.states.push_back(to);
-            }
-            n.trans.push_back({from,regex[i],to});
-            if (alphainvector(n.alphabet,regex[i]))
-            {
-                n.alphabet.push_back(regex[i]);
-            }
-            if(stateinvector(n.start_state,from) == 0)
-            {
-                n.start_state.push_back(from);
-            }
-            if(stateinvector(n.final_state,to) == 0)
-            {
-                n.final_state.push_back(to);
-            }
-            nfa.push(n);
-            state_count+=2;
-        }
-        else if (regex[i] == '*')
-        {
-            NFA n = nfa.top();
-            nfa.pop();
-            NFA n1;
-            addstate(n1.start_state,state_count);
-            for (int j = 0; j < n.states.size(); j++)
-            {
-                addstate(n.states,n.states[j]);
-            }
-            addstate(n1.states,state_count);
-            for (int j = 0; j < n.final_state.size(); j++)
-            {
-                addstate(n1.final_state,n.final_state[j]);
-            }
-            addstate(n1.final_state,state_count);
-            for (int j = 0; j < n.alphabet.size(); j++)
-            {
-                addalphabet(n1.alphabet,n.alphabet[j]);
-            }
-            for (int j = 0; j < n.trans.size(); j++)
-            {
-                n1.trans.push_back(n.trans[j]);
-            }
-
-            n1.trans.push_back({state_count,'_',n.start_state[0]});
-
-            for (int j = 0; j < n.final_state.size(); j++)
-            {
-                transition temp = {n.final_state[j],'_',n.start_state[0]};
-                n1.trans.push_back(temp);
-            }
-            nfa.push(n1);
-            state_count+=1;
-        }
-        else if (regex[i]== '.')
-        {
-            NFA n1 = nfa.top();
-            nfa.pop();
-            NFA n2 = nfa.top();
-            nfa.pop();
-            NFA n;
-            for (int j = 0; j< n1.states.size(); j++)
-            {
-                addstate(n.states,n1.states[j]);
-            }
-            for (int j = 0; j < n2.states.size(); j++)
-            {
-                addstate(n.states,n2.states[j]);
-            }
-            for (int j = 0; j < n1.alphabet.size(); j++)
-            {
-                addalphabet(n.alphabet,n1.alphabet[j]);
-            }
-            for (int j = 0; j < n2.alphabet.size(); j++)
-            {
-                addalphabet(n.alphabet,n2.alphabet[j]);
-            }
-            for (int j = 0; j < n1.trans.size(); j++)
-            {
-                n.trans.push_back(n1.trans[j]);
-            }
-            for (int j = 0; j < n2.trans.size(); j++)
-            {
-                n.trans.push_back(n2.trans[j]);
-            }
-
-            for (int j = 0; j < n2.start_state.size(); j++)
-            {
-                addstate(n.start_state,n2.start_state[j]);
-            }
-            for (int j = 0; j < n1.final_state.size(); j++)
-            {
-                addstate(n.final_state,n1.final_state[j]);
-            }
-            for(int j = 0; j < n2.final_state.size(); j++)
-            {
-                transition temp = {n2.final_state[j],'_',n1.start_state[0]};
-                n.trans.push_back(temp);
-            }
-            nfa.push(n);
-        }
-        else if (regex[i]=='+')
-        {
-            NFA n1 = nfa.top();
-            nfa.pop();
-            NFA n2 = nfa.top();
-            nfa.top();
-            NFA n;
-            addstate(n.start_state,state_count);
-            addstate(n.states,state_count);
-            for (int j = 0; j < n1.states.size(); j++)
-            {
-                addstate(n.states,n1.states[j]);
-            }
-            for (int j = 0; j < n2.states.size(); j++)
-            {
-                addstate(n.states,n2.states[j]);
-            }
-            for (int j = 0; j < n1.alphabet.size(); j++)
-            {
-                addalphabet(n.alphabet,n1.alphabet[j]);
-            }
-            for (int j = 0; j < n2.alphabet.size(); j++)
-            {
-                addalphabet(n.alphabet,n2.alphabet[j]);
-            }
-             for (int j = 0; j < n1.trans.size(); j++)
-            {
-                n.trans.push_back(n1.trans[j]);
-            }
-            for (int j = 0; j < n2.trans.size(); j++)
-            {
-                n.trans.push_back(n2.trans[j]);
-            }
-            for (int j=0; j< n1.final_state.size();j++)
-            {
-                addstate(n.final_state,n1.final_state[j]);
-            }
-            for(int j=0; j< n2.final_state.size();j++)
-            {
-                addstate(n.final_state,n2.final_state[j]);
-            }
-            for (int j = 0; j < n1.start_state.size(); j++)
-            {
-                transition temp = {state_count,'_',n1.start_state[j]};
-                n.trans.push_back(temp);
-            }
-            for(int j =0; j< n2.start_state.size();j++)
-            {
-                transition temp = {state_count, '_',n2.start_state[j]};
-                n.trans.push_back(temp);
-            }
-
-            state_count+=1;
-            nfa.push(n);
-        }
-
-
-
-    }
-    return nfa.top();
-}
-
-
-int main()
-{
-    stack<string> regex;
-    string str;
-    cin>>str;
-    int n=str.length();
-
-    // adding concat symbol for future
-    string cstr = "";
-    for (int i = 0; i < n; i++)
-    {
-        cstr+=str[i];
-        if (str[i] == ')' || str[i] == '*' || (str[i] >= 'a' && str [i] ))
-        {
-            if (str[i+1] == '(' || (str[i+1] >= 'a' && str [i+1] <= 'z' ) ){
-                cstr+='.';
+            if (final_states.find(i) != final_states.end()){
+                final_states.erase(i);
             }
         }
     }
 
-   cout<<cstr<<endl;
+    vector<set<int>> setOSt = { non_final_states, final_states};
 
-    cstr = Topostfix(cstr);
-    cout<<cstr<<endl;
+    vector<set<int>> equivalence = equivalencetheorem(setOSt, transitionMap);
 
-    NFA nfa = regextoNFA(cstr);
-    cout<<"States: ";
-    for (int i = 0; i < nfa.states.size(); i++)
-    {
-        cout<<nfa.states[i]<<" ";
+    int **transitionMap2 = (int**)malloc(n*sizeof(int*));
+    for (int i = 0; i < n; i++){
+        transitionMap2[i] = (int*) malloc(26*sizeof(int));
+        for (int j = 0; j < 26; j++){
+            transitionMap2[i][j] = -1;
+        }
     }
-    cout<<endl;
-    cout<<"Alphabet: ";
-    for (int i = 0; i < nfa.alphabet.size(); i++)
-    {
-        cout<<nfa.alphabet[i]<<" ";
+    int numtr = 0;
+
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < 26; j++){
+            if(transitionMap[i][j] != -1){
+                int from;
+                int to;
+                for(int l = 0; l < equivalence.size(); l++){
+                    if(equivalence[l].find(i) != equivalence[l].end()){
+                        from = l;
+                    }
+                    if(equivalence[l].find(transitionMap[i][j]) != equivalence[l].end()){
+                        to = l;
+                    }
+                }
+                if(transitionMap2[from][j] != to){
+                    transitionMap2[from][j] = to;
+                    numtr++;
+                }
+
+            }
+        }
     }
-    cout<<endl;
-    cout<<"Start : ";
-    for (int i = 0; i < nfa.start_state.size(); i++)
-    {
-        cout<<nfa.start_state[i]<<" ";
+
+    set<int> minimized_final_states;
+
+    for(auto it= final_states.begin(); it != final_states.end(); it++){
+        for(int i = 0; i < equivalence.size(); i++){
+            if(equivalence[i].find(*it) != equivalence[i].end()){
+                minimized_final_states.insert(i);
+            }
+        }
     }
-    cout<<endl;
-    cout<<"Final: ";
-    for (int i = 0; i < nfa.final_state.size(); i++)
-    {
-        cout<<nfa.final_state[i]<<" ";
+
+    cout << equivalence.size() <<  " " << numtr << " " << minimized_final_states.size() << endl;
+
+    for(auto it = minimized_final_states.begin(); it != minimized_final_states.end(); it++){
+        cout << *it << " ";
     }
-    cout<<endl;
-    cout<<"Transitions: ";
-    for(int i=0;i<nfa.trans.size();i++)
-    {
-        cout << nfa.trans[i].curr << " " << nfa.trans[i].c << " " << nfa.trans[i].next;
-        cout << endl;
+    cout << endl;
+
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < 26; j++){
+            if(transitionMap2[i][j] != -1){
+                cout << i << " " << (char)(j+'a') << " " << transitionMap2[i][j] << endl;
+            }
+        }
     }
+
+
+
 
 }

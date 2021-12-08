@@ -114,7 +114,7 @@ void NFA(string poFix)
             trans.push_back(make_tuple(i, 'E', s2.first));
             trans.push_back(make_tuple(s1.second, 'E', i + 1));
             trans.push_back(make_tuple(s2.second, 'E', i + 1));
-            if (s1.first == start || s2.first == accept)
+            if (s1.first == start || s2.first == start)
                 start = i;
             if (s1.second == accept || s2.second == accept)
                 accept = i + 1;
