@@ -92,6 +92,7 @@ void *sim_spec(void *arg){
 
 	if(p->state == LEAVING) {
 		cprintf(RED, "t=%d: %s couldn't get a seat\n", get_time(), p->name);
+		sem_post(&zones[p->zone_id].free);
 		sem_post(p->semptr);
 		pthread_exit(NULL);
 	}
@@ -103,6 +104,7 @@ void *sim_spec(void *arg){
 			pthread_mutex_unlock(&MatchInfo.lock);
 			p->state = LEAVING;
 			cprintf(YELLOW, "t=%d: Person %s is leaving due to the bad defensive performance of his team\n", get_time(), p->name);
+			sem_post(&zones[p->zone_id].free);
 			if(p->type == ZONE_H)
 				pthread_cond_broadcast(&MatchInfo.HN_free);
 			else
@@ -113,6 +115,7 @@ void *sim_spec(void *arg){
 			if(pthread_cond_timedwait(&MatchInfo.home_c, &MatchInfo.lock, &endspec) != 0){
 				p->state = LEAVING;
 				cprintf(BLUE, "t=%d: Person %s watched the match for %d seconds and is leaving\n", get_time(), p->name, spectating_time);
+				sem_post(&zones[p->zone_id].free);
 				pthread_cond_broadcast(&MatchInfo.A_free);
 			}
 			pthread_mutex_unlock(&MatchInfo.lock);
@@ -121,6 +124,7 @@ void *sim_spec(void *arg){
 			if(pthread_cond_timedwait(&MatchInfo.away_c, &MatchInfo.lock, &endspec) != 0){
 				p->state = LEAVING;
 				cprintf(BLUE, "t=%d: Person %s watched the match for %d seconds and is leaving\n", get_time(), p->name, spectating_time);
+				sem_post(&zones[p->zone_id].free);
 				pthread_cond_broadcast(&MatchInfo.HN_free);
 			}
 			pthread_mutex_unlock(&MatchInfo.lock);
@@ -137,6 +141,7 @@ void *sim_spec(void *arg){
 		// Will timeout
 		pthread_cond_timedwait(&redundant_c, &redundant_l, &endspec);
 		pthread_mutex_unlock(&redundant_l);
+		sem_post(&zones[p->zone_id].free);
 		cprintf(BLUE, "t=%d: Person %s watched the match for %d seconds and is leaving\n", get_time(), p->name, spectating_time);
 		pthread_cond_broadcast(&MatchInfo.HAN_free);
 		p->state = LEAVING;
