@@ -1,0 +1,9 @@
+/home/akcube/Desktop/iiit-h-code/CG-2022-Spring/opengl-tutorial/build/CMakeFiles/app.dir
+/home/akcube/Desktop/iiit-h-code/CG-2022-Spring/opengl-tutorial/build/CMakeFiles/glad.dir
+/home/akcube/Desktop/iiit-h-code/CG-2022-Spring/opengl-tutorial/build/CMakeFiles/edit_cache.dir
+/home/akcube/Desktop/iiit-h-code/CG-2022-Spring/opengl-tutorial/build/CMakeFiles/rebuild_cache.dir
+/home/akcube/Desktop/iiit-h-code/CG-2022-Spring/opengl-tutorial/build/libraries/glfw/CMakeFiles/edit_cache.dir
+/home/akcube/Desktop/iiit-h-code/CG-2022-Spring/opengl-tutorial/build/libraries/glfw/CMakeFiles/rebuild_cache.dir
+/home/akcube/Desktop/iiit-h-code/CG-2022-Spring/opengl-tutorial/build/libraries/glfw/src/CMakeFiles/glfw.dir
+/home/akcube/Desktop/iiit-h-code/CG-2022-Spring/opengl-tutorial/build/libraries/glfw/src/CMakeFiles/edit_cache.dir
+/home/akcube/Desktop/iiit-h-code/CG-2022-Spring/opengl-tutorial/build/libraries/glfw/src/CMakeFiles/rebuild_cache.dir
