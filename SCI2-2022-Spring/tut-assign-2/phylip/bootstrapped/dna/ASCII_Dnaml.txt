@@ -1,0 +1,53 @@
+
+Consensus tree program, version 3.698
+
+Species in order: 
+
+  1. MT126746.1
+  2. MN996532.2
+  3. NC 004718.
+  4. MN723544.1
+  5. OM009282.1
+  6. KR559017.1
+
+
+Sets included in the consensus tree
+
+Set (species in order)     How many times out of  100.00
+
+..****                     100.00
+...**.                     100.00
+...***                     96.00
+
+
+Sets NOT included in consensus tree:
+
+Set (species in order)     How many times out of  100.00
+
+..*..*                      3.00
+..***.                      1.00
+
+
+Extended majority rule consensus tree
+
+CONSENSUS TREE:
+the numbers on the branches indicate the number
+of times the partition of the species into the two sets
+which are separated by that branch occurred
+among the trees, out of 100.00 trees
+
+                          +---------------KR559017.1
+                  +--96.0-|
+                  |       |       +-------MN723544.1
+          +-100.0-|       +-100.0-|
+          |       |               +-------OM009282.1
+  +-------|       |
+  |       |       +-----------------------NC 004718.
+  |       |
+  |       +-------------------------------MN996532.2
+  |
+  +---------------------------------------MT126746.1
+
+
+  remember: this is an unrooted tree!
+

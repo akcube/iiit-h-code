@@ -1,6 +1,6 @@
 from biolib import CodonTable, utils
 
-f = open("input.txt","r")                                             # Displaying the DNA sequence
+f = open("input.txt","r") 
 DNA = f.read()
 f.close()
 print("\nInput DNA Sequence: ", DNA, "\n")

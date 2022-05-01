@@ -1,0 +1,72 @@
+%!PS-Adobe-3.0
+%Test postscript
+%%Title: Phylip Tree Output
+%%Creator: Phylip Drawgram
+%%Pages: 1 1
+%%DocumentFonts: (atend)
+%%Orientation: Portrait
+%%DocumentMedia: Page 585 765 0 ( ) ( )
+%%BoundingBox: 46 61 539 704
+%%EndComments
+/l {newpath moveto lineto stroke} def
+%%EndProlog
+%%Page: 1 1
+<< /PageSize [ 585 765 ] >> setpagedevice 1 setlinecap 
+ 1 setlinejoin
+    2.87 setlinewidth newpath
+  381.89   344.87   356.60   388.67 l
+  356.60   388.67   311.77   412.08 l
+  311.77   412.08   263.02   398.61 l
+  263.02   398.61   234.70   356.70 l
+  234.70   356.70   224.64   307.13 l
+  234.70   356.70   184.31   361.16 l
+  263.02   398.61   232.74   439.12 l
+  311.77   412.08   319.91   462.00 l
+  356.60   388.67   401.14   412.65 l
+  381.89   344.87   407.18   301.07 l
+ stroke    0.96 setlinewidth 
+1 setlinecap 1 setlinejoin 
+gsave
+/Times-Roman findfont 24.099546 scalefont setfont
+161.382091 283.203837 translate 0.000000 rotate
+0 0 moveto
+(MT126746.1) show
+grestore
+gsave
+/Times-Roman findfont 24.099546 scalefont setfont
+47.140264 359.595796 translate 0.000000 rotate
+0 0 moveto
+(MN996532.2) show
+grestore
+gsave
+/Times-Roman findfont 24.099546 scalefont setfont
+173.828407 447.097836 translate 0.000000 rotate
+0 0 moveto
+(NC 004718.) show
+grestore
+gsave
+/Times-Roman findfont 24.099546 scalefont setfont
+257.982651 469.974649 translate 0.000000 rotate
+0 0 moveto
+(KR559017.1) show
+grestore
+gsave
+/Times-Roman findfont 24.099546 scalefont setfont
+336.536648 420.623227 translate 0.000000 rotate
+0 0 moveto
+(MN723544.1) show
+grestore
+gsave
+/Times-Roman findfont 24.099546 scalefont setfont
+342.578333 277.142084 translate 0.000000 rotate
+0 0 moveto
+(OM009282.1) show
+grestore
+stroke     2.87 setlinewidth 
+ 1 setlinecap 1 setlinejoin 
+stroke showpage 
+
+%%PageTrailer
+%%PageFonts: Times-Roman
+%%Trailer
+%%DocumentFonts: Times-Roman

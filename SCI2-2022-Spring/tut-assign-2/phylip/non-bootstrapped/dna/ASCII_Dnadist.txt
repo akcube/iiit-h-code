@@ -1,0 +1,39 @@
+
+   6 Populations
+
+Neighbor-Joining/UPGMA method version 3.698
+
+
+ Neighbor-joining method
+
+ Negative branch lengths allowed
+
+
+    +----NC_004718.
+  +-3 
+  ! !    +MN996532.2
+  ! +----2 
+  !      +MT126746.1
+  ! 
+  !                           +--------MN723544.1
+  4---------------------------1 
+  !                           +------OM009282.1
+  ! 
+  +-----KR559017.1
+
+
+remember: this is an unrooted tree!
+
+Between        And            Length
+-------        ---            ------
+   4             3            0.05228
+   3          NC_004718.      0.15797
+   3             2            0.15724
+   2          MN996532.2      0.03594
+   2          MT126746.1      0.03673
+   4             1            0.92398
+   1          MN723544.1      0.28829
+   1          OM009282.1      0.23163
+   4          KR559017.1      0.20291
+
+

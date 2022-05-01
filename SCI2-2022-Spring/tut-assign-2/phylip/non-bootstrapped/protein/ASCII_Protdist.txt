@@ -1,0 +1,39 @@
+
+   6 Populations
+
+Neighbor-Joining/UPGMA method version 3.698
+
+
+ Neighbor-joining method
+
+ Negative branch lengths allowed
+
+
+  +QIG55955.1
+  ! 
+  !     +---sp|Q0Q475.
+  !   +-3 
+  !   ! +---YP_0098250
+  2---4 
+  !   !                                    +-------QGW51920.1
+  !   +------------------------------------1 
+  !                                        +-----UJZ92542.1
+  ! 
+  +QHR63300.2
+
+
+remember: this is an unrooted tree!
+
+Between        And            Length
+-------        ---            ------
+   2          QIG55955.1      0.01154
+   2             4            0.11892
+   4             3            0.03075
+   3          sp|Q0Q475.      0.11420
+   3          YP_0098250      0.10954
+   4             1            1.20937
+   1          QGW51920.1      0.25025
+   1          UJZ92542.1      0.21155
+   2          QHR63300.2      0.01140
+
+

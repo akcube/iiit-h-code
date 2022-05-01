@@ -1,0 +1,53 @@
+
+Consensus tree program, version 3.698
+
+Species in order: 
+
+  1. sp|Q0Q475.
+  2. YP 0098250
+  3. QGW51920.1
+  4. UJZ92542.1
+  5. QIG55955.1
+  6. QHR63300.2
+
+
+Sets included in the consensus tree
+
+Set (species in order)     How many times out of  100.00
+
+..**..                     100.00
+....**                     100.00
+..****                     90.00
+
+
+Sets NOT included in consensus tree:
+
+Set (species in order)     How many times out of  100.00
+
+.*..**                      9.00
+.***..                      1.00
+
+
+Extended majority rule consensus tree
+
+CONSENSUS TREE:
+the numbers on the branches indicate the number
+of times the partition of the species into the two sets
+which are separated by that branch occurred
+among the trees, out of 100.00 trees
+
+                          +-------QGW51920.1
+                  +-100.0-|
+                  |       +-------UJZ92542.1
+          +--90.0-|
+          |       |       +-------QIG55955.1
+  +-------|       +-100.0-|
+  |       |               +-------QHR63300.2
+  |       |
+  |       +-----------------------YP 0098250
+  |
+  +-------------------------------sp|Q0Q475.
+
+
+  remember: this is an unrooted tree!
+
