@@ -1,0 +1,32 @@
+System model:
+- Synchronus system. Algorithms run in lock-step.
+- Communication medium cannot be faulty or crash.
+- Fully connected.
+- Receiver should always be able to identify the sender correctly. <= sussy
+
+- [x] Crash Consensus
+	- No byzantine processes, they can just crash, even in the middle of sending messages to processes.
+	- We want to solve consensus problem.
+	- Just run f+1 rounds where each process broadcasts this value to everyone else. Take min of all values received at end of round.
+	- Easy to prove by contradiction. If only f can be faulty then there will be a surviving value everyone will agree on.
+	- Complexity is (f+1) * n * (n-1). f+1 rounds, n processes, n-1 messages per process.
+
+- [ ] Lamport-Shostak-Pease Algorithm
+	- NEED TO DRY RUN (7, 2) case before going. MUST DO. 
+
+- [x] Phase-King Algorithm
+	- Solves the byzantine consensus problem in polynomial number of messages. Works for f < ceil(n/4)
+	- Run f+1 rounds. In each round takes place in two phases:
+		- P1: Each process broadcasts it's current value $v$ and wait to receive everyone else's message. If some value occurs > n/2 times, set majority = this value. Otherwise majority = default value.
+		- P2: 
+			- If process i = round_id, broadcast majority to everyone. 
+			- Every other process receives the king process' message. If the majority value occured > n/2 + f times, v = majority. Else v = king's broadcast.
+	- Proof is by casework, focus on the round where phase king is non-faulty. Such round must exist since we are running for $f+1$ rounds. 
+		- C1: $p_i$ and $p_j$ both set via the phase king's broadcast. Since king is not malicious, values are same.
+		- C2: $p_i$ and $p_j$ set by majority > n/2 + f condition. This condition implies at least n/2 processes which agreed on $v$ are non-malicious, since $n/2 + f$ gave the same value $v$ and only $f$ can change their answer. This means both $p_i$ and $p_j$ would have had same value set for majority.
+		- C3: $p_i$ got from king, and $p_j$ set majority. Same reasoning as above, the king's value would be = majority value which must be same for king and $p_j$. Therefore it doesn't matter, the values will be same. 
+	- After this round, majority will be at least 3n/4 non-malicious processes who agree on the same value, so they'll always set value via the n/2 + f condition and the value won't change.
+
+- [ ] Gallager-Humblet-Spira Algorithm (MST Finding)
+
+

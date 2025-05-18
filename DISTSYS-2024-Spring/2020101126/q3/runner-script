@@ -1,0 +1,22 @@
+#!/usr/bin/bash
+
+STREAM_JAR=$1
+LOCAL_INP=$2
+HDFS_INP=$3
+HDFS_OUT=$4
+
+hdfs dfs -put ${LOCAL_INP} ${HDFS_INP}
+
+hadoop jar $STREAM_JAR -D mapred.reduce.tasks=3 -input ${HDFS_INP} -output ${HDFS_OUT}0 \
+-mapper ./mapper0.py -file ./mapper0.py -reducer ./reducer0.py -file \
+./reducer0.py
+
+for i in {1..9}; do
+hadoop jar $STREAM_JAR -D mapred.reduce.tasks=3 -input ${HDFS_OUT}$((i-1)) -output ${HDFS_OUT}${i} \
+-mapper ./mapper1.py -file ./mapper1.py -reducer ./reducer0.py -file \
+./reducer0.py
+done
+
+hadoop jar $STREAM_JAR -D mapred.reduce.tasks=3 -input ${HDFS_OUT}9 -output ${HDFS_OUT} \
+-mapper ./mapper2.py -file ./mapper2.py -reducer ./reducer1.py -file \
+./reducer1.py

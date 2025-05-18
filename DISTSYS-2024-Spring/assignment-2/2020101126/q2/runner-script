@@ -1,0 +1,21 @@
+#!/usr/bin/bash
+
+STREAM_JAR=$1
+LOCAL_INP=$2
+HDFS_INP=$3
+HDFS_OUT=$4
+
+hdfs dfs -put ${LOCAL_INP} ${HDFS_INP}
+
+hadoop jar $STREAM_JAR -D mapred.reduce.tasks=3 \
+    -input ${HDFS_INP} -output ${HDFS_OUT}0 \
+    -mapper "./mapper0.out" -file "./mapper0.out" \
+    -combiner "./combiner0.out" -file "./combiner0.out" \
+    -reducer "./reducer0.out" -file "./reducer0.out"
+
+hadoop jar $STREAM_JAR -D mapred.reduce.tasks=3 \
+    -input ${HDFS_OUT}0 -output ${HDFS_OUT} \
+    -mapper "./mapper1.out" -file "./mapper1.out" \
+    -combiner "./combiner1.out" -file "./combiner1.out" \
+    -reducer "./reducer1.out" -file "./reducer1.out"
+
